@@ -152,15 +152,17 @@ namespace AIS_AssignmentONE
             Console.WriteLine("                    ASSIGNMENT TWO                       ");
             Console.WriteLine("*********************************************************");
 
-            double est = 1.00;
-            Sqrt(est);
+            double x = 2.00;
+            double output = Sqrt(x);
+
+            Console.WriteLine(output.ToString("#.0000"));
             
             Console.ReadLine();
         }
 
-        private  static void Sqrt(double est)
+        private  static double Sqrt(double x)
         {
-            double x = 2.00;
+            double est = 1.00;
             double quatient, mean = 0.00;
             Console.WriteLine("Estimate ||     Quatient ||  Mean");
             Console.WriteLine("=======================================");
@@ -185,6 +187,7 @@ namespace AIS_AssignmentONE
 
             Console.WriteLine("=======================================");
 
+            return est;
         }
 
     }

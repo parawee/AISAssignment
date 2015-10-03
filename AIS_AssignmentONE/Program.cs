@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AIS_AssignmentONE
 {
-    class Gate
+    public class Gate
     {
         public static int INV(int in1)
         {
@@ -28,11 +28,12 @@ namespace AIS_AssignmentONE
         }
     }
 
-    class HalfAdder
+    public class HalfAdder
     {
-        private int a {get;set;}
-        private int b {get;set;}
-        private int[] GetHalfAdder()
+        public int a { get; set; }
+        public int b { get; set; }
+
+        public int[] GetHalfAdder()
         {
             int[] output = new int[2];
 
@@ -55,13 +56,13 @@ namespace AIS_AssignmentONE
         }
     }
 
-    class FullAdder
+    public class FullAdder
     {
-        private int a { get; set; }
-        private int b { get; set; }
-        private int c { get; set; }
+        public int a { get; set; }
+        public int b { get; set; }
+        public int c { get; set; }
 
-        private int[] GetFullAdder()
+        public int[] GetFullAdder()
         {
             int[] output = new int[2];
             // process 
@@ -163,17 +164,26 @@ namespace AIS_AssignmentONE
             double quatient, mean = 0.00;
             Console.WriteLine("Estimate ||     Quatient ||  Mean");
             Console.WriteLine("=======================================");
-            
-            do
+
+            try
             {
+                do
+                {
 
-                quatient = (x / est);
-                mean = (quatient + est) / 2;
-                
-                Console.WriteLine(String.Format("{0}   ||    {1}    ||    {2}", est.ToString("#.0000"), quatient.ToString("#.0000"), mean.ToString("#.0000")));
-                est = mean;
+                    quatient = (x / est);
+                    mean = (quatient + est) / 2;
 
-            } while ((Math.Abs(est * est - x) / x) > 0.001);
+                    Console.WriteLine(String.Format("{0}   ||    {1}    ||    {2}", est.ToString("#.0000"), quatient.ToString("#.0000"), mean.ToString("#.0000")));
+                    est = mean;
+
+                } while ((Math.Abs(est * est - x) / x) > 0.001);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            Console.WriteLine("=======================================");
 
         }
 

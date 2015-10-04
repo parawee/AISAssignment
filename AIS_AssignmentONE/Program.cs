@@ -5,6 +5,11 @@ using System.Text;
 
 namespace AIS_AssignmentONE
 {
+    interface IExecuteAdder
+    {
+      int[] ExecuteAdder(int[] x);
+    }
+
     public class Gate
     {
         public static int INV(int in1)
@@ -28,7 +33,7 @@ namespace AIS_AssignmentONE
         }
     }
 
-    public class HalfAdder
+    public class HalfAdder : IExecuteAdder
     {
         public int a { get; set; }
         public int b { get; set; }
@@ -54,9 +59,19 @@ namespace AIS_AssignmentONE
             result = oHalfAdder.GetHalfAdder();
             return result;
         }
+
+        public int[] ExecuteAdder(int[] x)
+        {
+            int[] result = new int[2];
+            HalfAdder oHalfAdder = new HalfAdder();
+            oHalfAdder.a = x[0];
+            oHalfAdder.b = x[1];
+            result = oHalfAdder.GetHalfAdder();
+            return result;
+        }
     }
 
-    public class FullAdder
+    public class FullAdder : IExecuteAdder
     {
         public int a { get; set; }
         public int b { get; set; }
@@ -89,6 +104,17 @@ namespace AIS_AssignmentONE
             return result;
         }
 
+        public int[] ExecuteAdder(int[] x)
+        {
+            int[] result = new int[2];
+            FullAdder oFullAdder = new FullAdder();
+            oFullAdder.a = x[0];
+            oFullAdder.b = x[1];
+            oFullAdder.c = x[2];
+            result = oFullAdder.GetFullAdder();
+            return result;
+        }
+
     }
 
     class Program
@@ -103,47 +129,59 @@ namespace AIS_AssignmentONE
             Console.WriteLine("*********************************************************");
 
             Console.WriteLine("==================== HALF ADDER (HA) ====================");
-            a = 1; b = 1;
-            result = HalfAdder.ExecuteHalfAdder(a, b);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}], output s = [{2}] ,output c = [{3}]", a, b, result[0], result[1]));
-            a = 1; b = 0;
-            result = HalfAdder.ExecuteHalfAdder(a, b);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}], output s = [{2}] ,output c = [{3}]", a, b, result[0], result[1]));
-            a = 0; b = 1;
-            result = HalfAdder.ExecuteHalfAdder(a, b);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}], output s = [{2}] ,output c = [{3}]", a, b, result[0], result[1]));
-            a = 0; b = 0;
-            result = HalfAdder.ExecuteHalfAdder(a, b);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}], output s = [{2}] ,output c = [{3}]", a, b, result[0], result[1]));
+            
+            IExecuteAdder oHalfAdder = new HalfAdder();
+            var halfAdder = new int[] { 1, 1 };
+            result = oHalfAdder.ExecuteAdder(halfAdder);
+            PrintResult(halfAdder, result);
+
+            halfAdder = new int[] { 1, 0 };
+            result = oHalfAdder.ExecuteAdder(halfAdder);
+            PrintResult(halfAdder, result);
+
+            halfAdder = new int[] { 0, 1 };
+            result = oHalfAdder.ExecuteAdder(halfAdder);
+            PrintResult(halfAdder, result);
+
+            halfAdder = new int[] { 0, 0 };
+            result = oHalfAdder.ExecuteAdder(halfAdder);
+            PrintResult(halfAdder, result);
+
             Console.WriteLine("=========================================================");
-
-
-
             Console.WriteLine("==================== FULL ADDER (FA) ====================");
             a = 0; b = 0; c = 0 ;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 0; b = 0; c = 1;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 0; b = 1; c = 0;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 1; b = 0; c = 0;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 0; b = 1; c = 1;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 1; b = 0; c = 1;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 1; b = 1; c = 0;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
-            a = 1; b = 1; c = 1;
-            result = FullAdder.ExecuteFullAdder(a, b, c);
-            Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", a, b, c, result[0], result[1]));
+            var fullAdder = new int[] { 0, 0,0 };
+            IExecuteAdder oFullAdder = new FullAdder();
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 0, 0, 1 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 0, 1, 0 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 1, 0, 0 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 0, 1, 1 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 1, 0, 1 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 1, 1, 0 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
+
+            fullAdder = new int[] { 1, 1, 1 };
+            result = oFullAdder.ExecuteAdder(fullAdder);
+            PrintResult(halfAdder, result);
 
             Console.WriteLine("=========================================================");
 
@@ -152,12 +190,43 @@ namespace AIS_AssignmentONE
             Console.WriteLine("                    ASSIGNMENT TWO                       ");
             Console.WriteLine("*********************************************************");
 
-            double x = 2.00;
-            double output = Sqrt(x);
+            double x = 0.00;
 
-            Console.WriteLine(output.ToString("#.0000"));
-            
+            Console.WriteLine("###Exit Console by type 'exit'###"); // Prompt
+            Console.WriteLine("Enter input Sqrt:"); // Prompt
+            string line = Console.ReadLine(); // Get string from user
+            if (line == "exit") // Check string
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                try
+                {
+                    x = Convert.ToDouble(line);
+                    double output = Sqrt(x);
+                    Console.WriteLine(output.ToString("#.0000"));
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+            Console.WriteLine("Press Any key to Exit");
             Console.ReadLine();
+        }
+
+        private static void PrintResult(int[] input, int[] output)
+        {
+            if (input.Length == 2)
+            {
+                Console.WriteLine(String.Format("input a [{0}] , input b [{1}], output s = [{2}] ,output c = [{3}]", input[0], input[1], output[0], output[1]));
+            }
+            else
+            {
+                Console.WriteLine(String.Format("input a [{0}] , input b [{1}] , input c [{2}] , output c = [{3}] ,output s = [{4}]", input[0], input[1], input[2], output[0], output[1]));
+            }
         }
 
         private  static double Sqrt(double x)
@@ -166,12 +235,10 @@ namespace AIS_AssignmentONE
             double quatient, mean = 0.00;
             Console.WriteLine("Estimate ||     Quatient ||  Mean");
             Console.WriteLine("=======================================");
-
             try
             {
                 do
                 {
-
                     quatient = (x / est);
                     mean = (quatient + est) / 2;
 

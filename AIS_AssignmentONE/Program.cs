@@ -5,123 +5,111 @@ using System.Text;
 
 namespace AIS_AssignmentONE
 {
-    interface IExecuteAdder
+    public interface IExecuteAdder
     {
-      int[] ExecuteAdder(int[] x);
+        int[] ExecuteAdder(int[] x);
     }
 
-    public class Gate
+    public interface IGateOperate
     {
-        public static int INV(int in1)
+        int Operate();
+    }
+
+    public abstract class Gate
+    {
+        public int[] Input;
+        public int InputSingle;
+    }
+
+    public class AndGate : Gate, IGateOperate
+    {
+        public int Operate()
         {
-            return in1 ^= 1;
+            return Input[0] * Input[1];
         }
-        public static int AND(int in1, int in2)
+    }
+
+    public class OrGate : Gate, IGateOperate
+    {
+        public int Operate()
         {
-            return in1 * in2;
-        }
-        public static int OR(int in1, int in2)
-        {
-            if (in1 == in2 && in1 == 0)
+            if (Input[0] == Input[1] && Input[0] == 0)
             {
                 return 0;
             }
             else
             {
-               return 1;
+                return 1;
             }
+        }
+    }
+
+    public class InvGate : Gate, IGateOperate
+    {
+        public int Operate()
+        {
+            return InputSingle ^= 1;
         }
     }
 
     public class HalfAdder : IExecuteAdder
     {
-        public int a { get; set; }
-        public int b { get; set; }
-
-        public int[] GetHalfAdder()
-        {
-            int[] output = new int[2];
-
-            // process s
-            output[0]= Gate.AND(Gate.OR(a,b),Gate.INV(Gate.AND(a,b)));
-            // process c
-            output[1]= Gate.AND(a,b);
-
-            return output;
-        }
-
-        public static int[] ExecuteHalfAdder(int a, int b)
-        {
-            int[] result = new int[2];
-            HalfAdder oHalfAdder = new HalfAdder();
-            oHalfAdder.a = a;
-            oHalfAdder.b = b;
-            result = oHalfAdder.GetHalfAdder();
-            return result;
-        }
-
         public int[] ExecuteAdder(int[] x)
         {
             int[] result = new int[2];
-            HalfAdder oHalfAdder = new HalfAdder();
-            oHalfAdder.a = x[0];
-            oHalfAdder.b = x[1];
-            result = oHalfAdder.GetHalfAdder();
+            int[] temp = new int[2];
+
+            var oOr = new OrGate();
+            oOr.Input = x;
+            result[0] = oOr.Operate();
+
+            var oAnd = new AndGate();
+            oAnd.Input = x;
+            result[1] = oAnd.Operate();
+
+            temp[0] = result[0];
+
+            var oInv = new InvGate();
+            oInv.InputSingle = result[1];
+            temp[1] = oInv.Operate();
+
+            oAnd.Input = temp;
+            result[0] = oAnd.Operate();
             return result;
         }
     }
 
     public class FullAdder : IExecuteAdder
     {
-        public int a { get; set; }
-        public int b { get; set; }
-        public int c { get; set; }
-
-        public int[] GetFullAdder()
-        {
-            int[] output = new int[2];
-            // process 
-            output[0] = Gate.OR(HalfAdder.ExecuteHalfAdder(c, b)[0],
-                                                                    HalfAdder.ExecuteHalfAdder(
-                                                                            HalfAdder.ExecuteHalfAdder(c, b)[1]
-                                                                            ,a)[0]
-                               );
-
-            output[1] = HalfAdder.ExecuteHalfAdder(
-                       HalfAdder.ExecuteHalfAdder(c, b)[1], a)[1];
-
-            return output;
-        }
-
-        public static int[] ExecuteFullAdder(int a, int b, int c)
-        {
-            int[] result = new int[2];
-            FullAdder oFullAdder = new FullAdder();
-            oFullAdder.a = a;
-            oFullAdder.b = b;
-            oFullAdder.c = c;
-            result = oFullAdder.GetFullAdder();
-            return result;
-        }
-
         public int[] ExecuteAdder(int[] x)
         {
             int[] result = new int[2];
-            FullAdder oFullAdder = new FullAdder();
-            oFullAdder.a = x[0];
-            oFullAdder.b = x[1];
-            oFullAdder.c = x[2];
-            result = oFullAdder.GetFullAdder();
+            int[] Input = new int[2];
+            int[] Output = new int[2];
+
+            Input[0] = x[0];
+            Input[1] = x[1];
+            var oHalfAdd = new HalfAdder();
+            Output = oHalfAdd.ExecuteAdder(Input);
+            result[0] = Output[0];
+
+            Input[0] = Output[1];
+            Input[1] = x[2];
+            Output = oHalfAdd.ExecuteAdder(Input);
+            result[1] = Output[1];
+
+            Input[0] = result[0];
+            Input[1] = Output[0];
+            var oOr = new OrGate();
+            oOr.Input = Input;
+            result[0] = oOr.Operate();
             return result;
         }
-
     }
-
     class Program
     {
         static void Main(string[] args)
         {
-            int a, b,c;
             int[] result = new int[2];
 
             Console.WriteLine("*********************************************************");
@@ -129,7 +117,6 @@ namespace AIS_AssignmentONE
             Console.WriteLine("*********************************************************");
 
             Console.WriteLine("==================== HALF ADDER (HA) ====================");
-            
             IExecuteAdder oHalfAdder = new HalfAdder();
             var halfAdder = new int[] { 1, 1 };
             result = oHalfAdder.ExecuteAdder(halfAdder);
@@ -149,39 +136,38 @@ namespace AIS_AssignmentONE
 
             Console.WriteLine("=========================================================");
             Console.WriteLine("==================== FULL ADDER (FA) ====================");
-            a = 0; b = 0; c = 0 ;
-            var fullAdder = new int[] { 0, 0,0 };
+            var fullAdder = new int[] { 0, 0, 0 };
             IExecuteAdder oFullAdder = new FullAdder();
             result = oFullAdder.ExecuteAdder(fullAdder);
             PrintResult(halfAdder, result);
 
             fullAdder = new int[] { 0, 0, 1 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             fullAdder = new int[] { 0, 1, 0 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             fullAdder = new int[] { 1, 0, 0 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             fullAdder = new int[] { 0, 1, 1 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             fullAdder = new int[] { 1, 0, 1 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             fullAdder = new int[] { 1, 1, 0 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             fullAdder = new int[] { 1, 1, 1 };
             result = oFullAdder.ExecuteAdder(fullAdder);
-            PrintResult(halfAdder, result);
+            PrintResult(fullAdder, result);
 
             Console.WriteLine("=========================================================");
 
